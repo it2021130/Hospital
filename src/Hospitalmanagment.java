@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class Hospitalmanagment {
 
-	public static void saveAssigmentsToFile(ArrayList<patient> patients, ArrayList<Doctor> doctor) {
+	public static void saveAssigmentsToFile(ArrayList<patient> patients, Doctor dr3, Doctor dr2, Doctor dr1) {
 		try {
 			FileWriter writer = new FileWriter("assigments.txt");  //c:\\ 
 		 for(patient p : patients) {
@@ -29,33 +29,85 @@ public class Hospitalmanagment {
 	}
 	
 	
-	
-	
-	
-	
-	
-	
-public static void additionToFile(ArrayList<patient> patients,ArrayList<Doctor> doctor ) {
-	try {
-		FileWriter writer =new FileWriter("assigments.txt");
-		//scan
-		//enter to list
-		//enterwriter.write());
-		writer.close();
-	}catch(IOException e) {
-		System.out.println("ποεκυψε σφαλμα");
+	public static void additionToFile(ArrayList<patient> patients, ArrayList<Doctor> doctors) {
+	    try {
+	        FileWriter writer = new FileWriter("assigments.txt", true); // true σημαίνει append
+	        for (Doctor doc : doctors) {
+	            for (patient p : doc.getPatients()) {
+	                writer.write(doc.getName() + " ( " + doc.getSpeciality() + " ) -> " + p.getName() + "\n");
+	            }
+	        }
+	        writer.close();
+	        System.out.println("Επιτυχής προσθήκη στο αρχείο.");
+	    } catch (IOException e) {
+	        System.out.println("Προέκυψε σφάλμα κατά την αποθήκευση στο εξωτερικό αρχείο.");
+	    }
 	}
 	
 	
+	
+
+public static void doctorAddition(ArrayList<Doctor> doctors) {
+    try {Scanner sc = new Scanner(System.in);
+    System.out.print("Εισάγετε όνομα νέου ιατρού: ");
+    String name = sc.nextLine();
+    System.out.print("Εισάγετε ειδικότητα: ");
+    String specialty = sc.nextLine();
+    
+    Doctor newDoctor = new Doctor(name, specialty);
+    doctors.add(newDoctor);
+    System.out.println("Ο γιατρός προστέθηκε επιτυχώς.");
+    } catch (Exception e) {
+        System.out.println("Προέκυψε σφάλμα κατά την αποθήκευση στο εξωτερικό αρχείο.");
+    }
+    }
+
+
+public static void deletePatient(ArrayList<patient> patients, ArrayList<Doctor> doctors) {
+    try {Scanner sc = new Scanner(System.in);
+    System.out.print("Εισάγετε το όνομα του ασθενούς που θέλετε να διαγράψετε: ");
+    String nameToDelete = sc.nextLine();
+
+    boolean found = false;
+    for (int i = 0; i < patients.size(); i++) {
+        if (patients.get(i).getName().equalsIgnoreCase(nameToDelete.trim())) {
+            patient toRemove = patients.get(i);
+            patients.remove(i);
+            for (Doctor d : doctors) {
+                d.getPatients().remove(toRemove);
+            }
+            System.out.println("Ο ασθενής διαγράφηκε επιτυχώς.");
+            found = true;
+            break;
+        }
+    }
+    if (!found) {
+        System.out.println("Δεν βρέθηκε ασθενής με αυτό το όνομα.");
+        }
+    } catch (Exception e) {
+        System.out.println("Προέκυψε σφάλμα κατά την αποθήκευση στο εξωτερικό αρχείο.");
+    }
 }
-	
-	
-public static void doctorAddition(ArrayList<Doctor> doctor) {
-	
-	
-	
-	
+
+public static void displayPatients(ArrayList<patient> patients) {
+    System.out.println("--- Λίστα Ασθενών ---");
+    try {
+        for (patient p : patients) {
+            System.out.println(
+                "Όνομα: " + p.getName() +
+                ", Ηλικία: " + p.getAge() +
+                ", Ασθένεια: " + p.getIllness() +
+                ", Καρκίνος: " + (p.hascancer() ? "Ναι" : "Όχι")
+            );
+        }
+    } catch (Exception e) {
+        System.out.println("Προέκυψε σφάλμα κατά την εμφάνιση της λίστας ασθενών.");
+        e.printStackTrace(); // προαιρετικό για debugging
+    }
 }
+
+
+
 	
 	
 	public static void main(String[] args) {
@@ -124,89 +176,46 @@ public static void doctorAddition(ArrayList<Doctor> doctor) {
 		///
 		
 		
+		Scanner sc = new Scanner(System.in);
 		int choice;
-		do{
-			
-		System.out.println("---- μενου επιλογων ----");//
-		System.out.println("1.αποθηκευση σε αρχειο");//
-		System.out.println("2.προσθηκη σε αρχειο");//
-		System.out.println("3.προσθηκη νεου ιατρου");//
-		System.out.println("4.διαγραφη ασθενους");//
-		System.out.println("5.εμφανιση ασθενων");//
-		System.out.println("6.εξοδος απο το μενου");
-		
-		Scanner sc =new Scanner(System.in);
-		choice =sc.nextInt();
-		
-		switch(choice) {
-		//"1.αποθηκευση σε αρχειο"
-		case 1://
-			saveAssigmentsToFile(allpatients,dr1,dr2,dr3);
-		
-		//"2.προσθηκη σε αρχειο"
-		case 2:
-			additionToFile(allpatients,alldoctor);
-	                                                     //////////////////////////////
-			
-		//"3.προσθηκη νεου ιατρου"	
-		case 3:
-			doctorAddition(alldoctor);
-		case 4:
-		case 5:
-		}	
-		
-		
-		
-		
-		
-		
-	}while(choice != 6);
 
-		
-		
-		
+		do {
+		    System.out.println("---- μενου επιλογων ----");
+		    System.out.println("1. αποθηκευση σε αρχειο");
+		    System.out.println("2. προσθηκη σε αρχειο");
+		    System.out.println("3. προσθηκη νεου ιατρου");
+		    System.out.println("4. διαγραφη ασθενους");
+		    System.out.println("5. εμφανιση ασθενων");
+		    System.out.println("6. εξοδος απο το μενου");
+
+		    choice = sc.nextInt();
+
+		    switch (choice) {
+		        case 1:
+		            saveAssigmentsToFile(allpatients, dr1, dr2, dr3);
+		            break;
+		        case 2:
+		            additionToFile(allpatients, alldoctor);
+		            break;
+		        case 3:
+		            doctorAddition(alldoctor);
+		            break;
+		        case 4:
+		            deletePatient(allpatients, alldoctor);
+		            break;
+		        case 5:
+		            displayPatients(allpatients);
+		            break;
+		        case 6:
+		            System.out.println("Εξοδος απο το μενου.");
+		            break;
+		        default:
+		            System.out.println("Μη έγκυρη επιλογή. Προσπαθησε ξανα.");
+		    }
+
+		} while (choice != 6);
+
 	
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
   }
 }
 

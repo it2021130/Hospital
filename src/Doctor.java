@@ -38,6 +38,10 @@ import java.util.ArrayList;
    public String getSpeciality() {
 	   return this.speciality;
    }
+
+   public ArrayList<patient> getPatients() {
+	return null;
+   }
    
  
    
